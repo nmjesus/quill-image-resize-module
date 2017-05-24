@@ -56,4 +56,5 @@ export default {
         stroke: '#444',
         strokeWidth: '2',
     },
+    systemTagsOptions: [],
 };

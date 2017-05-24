@@ -73,23 +73,20 @@ export class Toolbar extends BaseModule {
             },
             {
                 type: 'select',
+                options: this.options.systemTagsOptions,
                 apply: () => {
                     SystemTagClass.add(this.img, 'tag');
-                    console.log(SystemTagClass.value(this.img));
                 },
                 isApplied: () => SystemTagClass.value(this.img).indexOf('systemtag-') !== -1,
             },
         ];
     };
 
-    _select(alignment) {
-      const options = [{
+    _select(options) {
+      const opt = [{
         text: 'System tag',
         value: '',
-      }, {
-        text: 'systemtag1',
-        value: 'systemtag1',
-      }];
+      }].concat(options);
       const select = document.createElement('select');
       select.addEventListener('change', (ev) => {
         const { value } = ev.target;
@@ -100,7 +97,7 @@ export class Toolbar extends BaseModule {
         }
       });
 
-      options.forEach(option => {
+      opt.forEach(option => {
         const elm = document.createElement('option');
         elm.value = option.value;
         elm.innerHTML = option.text;
@@ -112,41 +109,42 @@ export class Toolbar extends BaseModule {
     _addToolbarButtons = () => {
   		const buttons = [];
   		this.alignments.forEach((alignment, idx) => {
-        if (alignment.type === 'select') {
-          const select = this._select(alignment);
+        if (alignment.type === 'select' && alignment.options && alignment.options.length) {
+          const select = this._select(alignment.options);
           this.toolbar.appendChild(select);
-          return;
         }
-  			const button = document.createElement('span');
-  			buttons.push(button);
-  			button.innerHTML = alignment.icon;
-  			button.addEventListener('click', () => {
-  					// deselect all buttons
-  				buttons.forEach(button => button.style.filter = '');
-  				if (alignment.isApplied()) {
-  						// If applied, unapply
-  					FloatStyle.remove(this.img);
-  					MarginStyle.remove(this.img);
-  					DisplayStyle.remove(this.img);
-            WideClass.remove(this.img, 'wide');
-  				}	else {
-  						// otherwise, select button and apply
-  					this._selectButton(button);
-  					alignment.apply();
-  				}
-  					// image may change position; redraw drag handles
-  				this.requestUpdate();
-  			});
-  			Object.assign(button.style, this.options.toolbarButtonStyles);
-  			if (idx > 0) {
-  				button.style.borderLeftWidth = '0';
-  			}
-  			Object.assign(button.children[0].style, this.options.toolbarButtonSvgStyles);
-  			if (alignment.isApplied()) {
-  					// select button if previously applied
-  				this._selectButton(button);
-  			}
-  			this.toolbar.appendChild(button);
+        if (alignment.type !== 'select') {
+          const button = document.createElement('span');
+          buttons.push(button);
+          button.innerHTML = alignment.icon;
+          button.addEventListener('click', () => {
+              // deselect all buttons
+            buttons.forEach(button => button.style.filter = '');
+            if (alignment.isApplied()) {
+                // If applied, unapply
+              FloatStyle.remove(this.img);
+              MarginStyle.remove(this.img);
+              DisplayStyle.remove(this.img);
+              WideClass.remove(this.img, 'wide');
+            }	else {
+                // otherwise, select button and apply
+              this._selectButton(button);
+              alignment.apply();
+            }
+              // image may change position; redraw drag handles
+            this.requestUpdate();
+          });
+          Object.assign(button.style, this.options.toolbarButtonStyles);
+          if (idx > 0) {
+            button.style.borderLeftWidth = '0';
+          }
+          Object.assign(button.children[0].style, this.options.toolbarButtonSvgStyles);
+          if (alignment.isApplied()) {
+              // select button if previously applied
+            this._selectButton(button);
+          }
+          this.toolbar.appendChild(button);  
+        }
   		 });
     };
 
