@@ -9,6 +9,7 @@ const FloatStyle = new Parchment.Attributor.Style('float', 'float');
 const MarginStyle = new Parchment.Attributor.Style('margin', 'margin');
 const DisplayStyle = new Parchment.Attributor.Style('display', 'display');
 const WideClass = new Parchment.Attributor.Class('wide', '');
+const SystemTagClass = new Parchment.Attributor.Class('systemtag', 'systemtag');
 
 export class Toolbar extends BaseModule {
     onCreate = () => {
@@ -67,51 +68,89 @@ export class Toolbar extends BaseModule {
                     DisplayStyle.remove(this.img);
                     FloatStyle.remove(this.img);
                     MarginStyle.remove(this.img);
-                    console.log(WideClass.value(this.img));
                 },
                 isApplied: () => WideClass.value(this.img) == 'wide',
+            },
+            {
+                type: 'select',
+                apply: () => {
+                    SystemTagClass.add(this.img, 'tag');
+                    console.log(SystemTagClass.value(this.img));
+                },
+                isApplied: () => SystemTagClass.value(this.img).indexOf('systemtag-') !== -1,
             },
         ];
     };
 
+    _select(alignment) {
+      const options = [{
+        text: 'System tag',
+        value: '',
+      }, {
+        text: 'systemtag1',
+        value: 'systemtag1',
+      }];
+      const select = document.createElement('select');
+      select.addEventListener('change', (ev) => {
+        const { value } = ev.target;
+        if (value) {
+          SystemTagClass.add(this.img, value);
+        } else {
+          SystemTagClass.remove(this.img);
+        }
+      });
+
+      options.forEach(option => {
+        const elm = document.createElement('option');
+        elm.value = option.value;
+        elm.innerHTML = option.text;
+        select.appendChild(elm);
+      });
+      return select;
+    }
+
     _addToolbarButtons = () => {
-		const buttons = [];
-		this.alignments.forEach((alignment, idx) => {
-			const button = document.createElement('span');
-			buttons.push(button);
-			button.innerHTML = alignment.icon;
-			button.addEventListener('click', () => {
-					// deselect all buttons
-				buttons.forEach(button => button.style.filter = '');
-				if (alignment.isApplied()) {
-						// If applied, unapply
-					FloatStyle.remove(this.img);
-					MarginStyle.remove(this.img);
-					DisplayStyle.remove(this.img);
-          WideClass.remove(this.img, 'wide');
-				}				else {
-						// otherwise, select button and apply
-					this._selectButton(button);
-					alignment.apply();
-				}
-					// image may change position; redraw drag handles
-				this.requestUpdate();
-			});
-			Object.assign(button.style, this.options.toolbarButtonStyles);
-			if (idx > 0) {
-				button.style.borderLeftWidth = '0';
-			}
-			Object.assign(button.children[0].style, this.options.toolbarButtonSvgStyles);
-			if (alignment.isApplied()) {
-					// select button if previously applied
-				this._selectButton(button);
-			}
-			this.toolbar.appendChild(button);
-		});
+  		const buttons = [];
+  		this.alignments.forEach((alignment, idx) => {
+        if (alignment.type === 'select') {
+          const select = this._select(alignment);
+          this.toolbar.appendChild(select);
+          return;
+        }
+  			const button = document.createElement('span');
+  			buttons.push(button);
+  			button.innerHTML = alignment.icon;
+  			button.addEventListener('click', () => {
+  					// deselect all buttons
+  				buttons.forEach(button => button.style.filter = '');
+  				if (alignment.isApplied()) {
+  						// If applied, unapply
+  					FloatStyle.remove(this.img);
+  					MarginStyle.remove(this.img);
+  					DisplayStyle.remove(this.img);
+            WideClass.remove(this.img, 'wide');
+  				}	else {
+  						// otherwise, select button and apply
+  					this._selectButton(button);
+  					alignment.apply();
+  				}
+  					// image may change position; redraw drag handles
+  				this.requestUpdate();
+  			});
+  			Object.assign(button.style, this.options.toolbarButtonStyles);
+  			if (idx > 0) {
+  				button.style.borderLeftWidth = '0';
+  			}
+  			Object.assign(button.children[0].style, this.options.toolbarButtonSvgStyles);
+  			if (alignment.isApplied()) {
+  					// select button if previously applied
+  				this._selectButton(button);
+  			}
+  			this.toolbar.appendChild(button);
+  		 });
     };
 
     _selectButton = (button) => {
-		button.style.filter = 'invert(20%)';
+		    button.style.filter = 'invert(20%)';
     };
-
 }
