@@ -1,154 +1,178 @@
-import IconAlignLeft from 'quill/assets/icons/align-left.svg';
-import IconAlignCenter from 'quill/assets/icons/align-center.svg';
-import IconAlignRight from 'quill/assets/icons/align-right.svg';
-import IconWide from 'quill/assets/icons/align-right.svg';
 import { BaseModule } from './BaseModule';
 
 const Parchment = window.Quill.imports.parchment;
 const FloatStyle = new Parchment.Attributor.Style('float', 'float');
 const MarginStyle = new Parchment.Attributor.Style('margin', 'margin');
 const DisplayStyle = new Parchment.Attributor.Style('display', 'display');
-const WideClass = new Parchment.Attributor.Class('wide', '');
+const WidthStyle = new Parchment.Attributor.Style('width', 'width');
 const SystemTagClass = new Parchment.Attributor.Class('systemtag', 'systemtag');
 
 export class Toolbar extends BaseModule {
-    onCreate = () => {
-		// Setup Toolbar
-        this.toolbar = document.createElement('div');
-        Object.assign(this.toolbar.style, this.options.toolbarStyles);
-        this.overlay.appendChild(this.toolbar);
+  onCreate = () => {
+  // Setup Toolbar
+    this.toolbar = document.createElement('div');
+    this.toolbar.className = 'btn-group';
+    Object.assign(this.toolbar.style, this.options.toolbarStyles);
+    this.overlay.appendChild(this.toolbar);
+    // Setup Buttons
+    this._defineButtons();
+    this._addToolbarActions();
+  };
 
-        // Setup Buttons
-        this._defineAlignments();
-        this._addToolbarButtons();
-    };
+  // The toolbar and its children will be destroyed when the overlay is removed
+  onDestroy = () => {};
 
-	// The toolbar and its children will be destroyed when the overlay is removed
-    onDestroy = () => {};
+  // Nothing to update on drag because we are are positioned relative to the overlay
+  onUpdate = () => {};
 
-	// Nothing to update on drag because we are are positioned relative to the overlay
-    onUpdate = () => {};
+  _defineButtons = () => {
+    this.actions = [
+      {
+        type: 'button',
+        icon: 'ql-float-left',
+        apply: () => {
+          DisplayStyle.remove(this.img);
+          FloatStyle.add(this.img, 'left');
+          MarginStyle.add(this.img, '0 1em 1em 0');
+          WidthStyle.remove(this.img);
+        },
+        isApplied: () => FloatStyle.value(this.img) == 'left',
+      },
+      {
+        type: 'button',
+        icon: 'ql-float-center',
+        apply: () => {
+          DisplayStyle.add(this.img, 'block');
+          FloatStyle.remove(this.img);
+          MarginStyle.add(this.img, 'auto');
+          WidthStyle.remove(this.img, 'wide');
+        },
+        isApplied: () => MarginStyle.value(this.img) == 'auto',
+      },
+      {
+        type: 'button',
+        icon: 'ql-float-right',
+        apply: () => {
+          DisplayStyle.remove(this.img);
+          FloatStyle.add(this.img, 'right');
+          MarginStyle.add(this.img, '0 0 1em 1em');
+          WidthStyle.remove(this.img);
+        },
+        isApplied: () => FloatStyle.value(this.img) == 'right',
+      },
+      {
+        type: 'button',
+        icon: 'ql-full-width',
+        apply: () => {
+          DisplayStyle.add(this.img, 'block');
+          FloatStyle.remove(this.img);
+          MarginStyle.remove(this.img);
+          WidthStyle.add(this.img, '100%');
+        },
+        isApplied: () => WidthStyle.value(this.img) == '100%',
+      },
+      {
+        type: 'dropdown',
+        options: this.options.systemTagsOptions || [],
+        apply: () => {
+          SystemTagClass.add(this.img, 'tag');
+        },
+        isApplied: () => SystemTagClass.value(this.img).indexOf('systemtag-') !== -1,
+      },
+      {
+        type: 'button',
+        icon: 'icon wb-trash',
+        apply: () => {
+        },
+        isApplied: () => {},
+      },
+    ];
+  };
 
-    _defineAlignments = () => {
-        this.alignments = [
-            {
-                icon: IconAlignLeft,
-                apply: () => {
-                    DisplayStyle.add(this.img, 'inline');
-                    FloatStyle.add(this.img, 'left');
-                    MarginStyle.add(this.img, '0 1em 1em 0');
-                    WideClass.remove(this.img, 'wide');
-                },
-                isApplied: () => FloatStyle.value(this.img) == 'left',
-            },
-            {
-                icon: IconAlignCenter,
-                apply: () => {
-                    DisplayStyle.add(this.img, 'block');
-                    FloatStyle.remove(this.img);
-                    MarginStyle.add(this.img, 'auto');
-                    WideClass.remove(this.img, 'wide');
-                },
-                isApplied: () => MarginStyle.value(this.img) == 'auto',
-            },
-            {
-                icon: IconAlignRight,
-                apply: () => {
-                    DisplayStyle.add(this.img, 'inline');
-                    FloatStyle.add(this.img, 'right');
-                    MarginStyle.add(this.img, '0 0 1em 1em');
-                    WideClass.remove(this.img, 'wide');
-                },
-                isApplied: () => FloatStyle.value(this.img) == 'right',
-            },
-            {
-                icon: IconWide,
-                apply: () => {
-                    WideClass.add(this.img, 'wide');
-                    DisplayStyle.remove(this.img);
-                    FloatStyle.remove(this.img);
-                    MarginStyle.remove(this.img);
-                },
-                isApplied: () => WideClass.value(this.img) == 'wide',
-            },
-            {
-                type: 'select',
-                options: this.options.systemTagsOptions,
-                apply: () => {
-                    SystemTagClass.add(this.img, 'tag');
-                },
-                isApplied: () => SystemTagClass.value(this.img).indexOf('systemtag-') !== -1,
-            },
-        ];
-    };
+  _dropdown(action, idx) {
+    const options = [{id: '', name: 'System tag'}].concat(action.options);
+    const dropdown = document.createElement('div');
+    dropdown.className = 'btn-group';
+    dropdown.setAttribute('role', 'group');
 
-    _select(options) {
-      const opt = [{
-        text: 'System tag',
-        value: '',
-      }].concat(options);
-      const select = document.createElement('select');
-      select.addEventListener('change', (ev) => {
-        const { value } = ev.target;
-        if (value) {
-          SystemTagClass.add(this.img, value);
-        } else {
-          SystemTagClass.remove(this.img);
-        }
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'btn btn-outline btn-default dropdown-toggle';
+    button.id = `ql-img-toolbar-button-${idx}`;
+    button.setAttribute('data-toggle', 'dropdown');
+    button.setAttribute('aria-expanded', 'false');
+    button.textContent = options[0].name;
+
+    const span = document.createElement('span');
+    span.className = 'caret';
+    button.appendChild(span);
+
+    dropdown.appendChild(button);
+
+    const ul = document.createElement('ul');
+    ul.className = 'dropdown-menu';
+    ul.setAttribute('aria-labelledby', button.id);
+    ul.setAttribute('role', 'menu');
+    options.forEach((option) => {
+      const li = document.createElement('li');
+      li.setAttribute('role', 'presentation');
+      const a = document.createElement('a');
+      a.textContent = option.name;
+      a.setAttribute('role', 'menuitem');
+      a.addEventListener('click', () => {
+        option.value ?
+        SystemTagClass.add(this.img, option.value) :
+        SystemTagClass.remove(this.img);
       });
+      li.appendChild(a);
+      ul.appendChild(li);
+    });
+    dropdown.appendChild(ul);
+    return dropdown;
+  }
 
-      opt.forEach(option => {
-        const elm = document.createElement('option');
-        elm.value = option.value;
-        elm.innerHTML = option.text;
-        select.appendChild(elm);
-      });
-      return select;
+  _button(action, idx) {
+    const button = document.createElement('button');
+    button.id = `ql-img-toolbar-button-${idx}`;
+    button.type = 'button';
+    button.className = 'btn btn-outline btn-default';
+    const icon = document.createElement('i');
+    icon.className = action.icon;
+    icon.setAttribute('aria-hidden', 'true');
+    button.appendChild(icon);
+    button.addEventListener('click', () => {
+      // deselect all buttons
+      this.toolbar.querySelectorAll('button').forEach(elm => elm.classList.remove('active'));
+      button.classList.add('active');
+      if (action.isApplied()) {
+        // If applied, unapply
+        FloatStyle.remove(this.img);
+        MarginStyle.remove(this.img);
+        DisplayStyle.remove(this.img);
+        WideClass.remove(this.img, 'wide');
+      } else {
+        // otherwise, select button and apply
+        button.classList.add('active');
+        action.apply();
+      }
+      // image may change position; redraw drag handles
+      this.requestUpdate();
+    });
+    if (action.isApplied()) {
+      // select button if previously applied
+      button.classList.add('active');
     }
+    return button;
+  }
 
-    _addToolbarButtons = () => {
-  		const buttons = [];
-  		this.alignments.forEach((alignment, idx) => {
-        if (alignment.type === 'select' && alignment.options && alignment.options.length) {
-          const select = this._select(alignment.options);
-          this.toolbar.appendChild(select);
-        }
-        if (alignment.type !== 'select') {
-          const button = document.createElement('span');
-          buttons.push(button);
-          button.innerHTML = alignment.icon;
-          button.addEventListener('click', () => {
-              // deselect all buttons
-            buttons.forEach(button => button.style.filter = '');
-            if (alignment.isApplied()) {
-                // If applied, unapply
-              FloatStyle.remove(this.img);
-              MarginStyle.remove(this.img);
-              DisplayStyle.remove(this.img);
-              WideClass.remove(this.img, 'wide');
-            }	else {
-                // otherwise, select button and apply
-              this._selectButton(button);
-              alignment.apply();
-            }
-              // image may change position; redraw drag handles
-            this.requestUpdate();
-          });
-          Object.assign(button.style, this.options.toolbarButtonStyles);
-          if (idx > 0) {
-            button.style.borderLeftWidth = '0';
-          }
-          Object.assign(button.children[0].style, this.options.toolbarButtonSvgStyles);
-          if (alignment.isApplied()) {
-              // select button if previously applied
-            this._selectButton(button);
-          }
-          this.toolbar.appendChild(button);  
-        }
-  		 });
-    };
+  _addToolbarActions = () => {
+    this.actions.forEach((action, idx) => {
+      let elm;
+      if (action.type === 'button') elm = this._button(action, idx);
+      if (action.type === 'dropdown') elm = this._dropdown(action, idx);
+      console.log(elm);
+      this.toolbar.appendChild(elm);
+      });
+  };
 
-    _selectButton = (button) => {
-		    button.style.filter = 'invert(20%)';
-    };
 }
