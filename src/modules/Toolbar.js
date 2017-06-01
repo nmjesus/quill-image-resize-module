@@ -136,6 +136,7 @@ export class Toolbar extends BaseModule {
     button.id = `ql-img-toolbar-button-${idx}`;
     button.type = 'button';
     button.className = 'btn btn-default';
+    // Object.assign(button, this.options.toolbarButtonStyles);
     const icon = document.createElement('i');
     icon.className = action.icon;
     icon.setAttribute('aria-hidden', 'true');
@@ -169,7 +170,9 @@ export class Toolbar extends BaseModule {
     this.actions.forEach((action, idx) => {
       let elm;
       if (action.type === 'button') elm = this._button(action, idx);
-      if (action.type === 'dropdown') elm = this._dropdown(action, idx);
+      if (action.type === 'dropdown' && action.options.length) {
+        elm = this._dropdown(action, idx);
+      }
       this.toolbar.appendChild(elm);
       });
   };

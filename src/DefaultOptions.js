@@ -30,21 +30,21 @@ export default {
         opacity: '0.80',
         cursor: 'default',
     },
-    toolbarStyles: {/*
+    toolbarStyles: {
         position: 'absolute',
         boxSizing: 'border-box',
         left: '50%',
         transform: 'translate(-50%, -50%)',
         background: 'white',
-    */},
-    toolbarButtonStyles: {/*
+    },
+    toolbarButtonStyles: {
         display: 'inline-block',
         width: '24px',
         height: '24px',
         background: 'white',
         border: '1px solid #999',
         verticalAlign: 'middle',
-    */},
+    },
     toolbarButtonSvgStyles: {
         fill: '#444',
         stroke: '#444',
