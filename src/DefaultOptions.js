@@ -30,12 +30,13 @@ export default {
         opacity: '0.80',
         cursor: 'default',
     },
-    toolbarStyles: {
+    toolbarStyles: {/*
         position: 'absolute',
         boxSizing: 'border-box',
         left: '50%',
         transform: 'translate(-50%, -50%)',
-    },
+        background: 'white',
+    */},
     toolbarButtonStyles: {/*
         display: 'inline-block',
         width: '24px',

@@ -11,8 +11,8 @@ export class Toolbar extends BaseModule {
   onCreate = () => {
   // Setup Toolbar
     this.toolbar = document.createElement('div');
-    this.toolbar.className = 'btn-group';
-    Object.assign(this.toolbar.style, this.options.toolbarStyles);
+    this.toolbar.className = 'ql-image-toolbar btn-group';
+    // Object.assign(this.toolbar.style, this.options.toolbarStyles);
     this.overlay.appendChild(this.toolbar);
     // Setup Buttons
     this._defineButtons();
@@ -135,7 +135,7 @@ export class Toolbar extends BaseModule {
     const button = document.createElement('button');
     button.id = `ql-img-toolbar-button-${idx}`;
     button.type = 'button';
-    button.className = 'btn btn-outline btn-default';
+    button.className = 'btn btn-default';
     const icon = document.createElement('i');
     icon.className = action.icon;
     icon.setAttribute('aria-hidden', 'true');
@@ -170,7 +170,6 @@ export class Toolbar extends BaseModule {
       let elm;
       if (action.type === 'button') elm = this._button(action, idx);
       if (action.type === 'dropdown') elm = this._dropdown(action, idx);
-      console.log(elm);
       this.toolbar.appendChild(elm);
       });
   };
