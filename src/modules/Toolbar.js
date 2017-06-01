@@ -101,6 +101,7 @@ export class Toolbar extends BaseModule {
     button.setAttribute('aria-expanded', 'false');
 
     const span = document.createElement('span');
+    span.className = 'text-truncate';
     const selected = options.filter(option => option.css === SystemTagClass.value(this.img));
     span.textContent = selected ? selected[0].name : options[0].name;
     button.appendChild(span);
