@@ -74,10 +74,6 @@ export class Toolbar extends BaseModule {
       {
         type: 'dropdown',
         options: this.options.systemTags,
-        apply: () => {
-          SystemTagClass.add(this.img, 'tag');
-        },
-        isApplied: () => SystemTagClass.value(this.img).indexOf('systemtag-') !== -1,
       },
       {
         type: 'button',
@@ -92,7 +88,7 @@ export class Toolbar extends BaseModule {
   };
 
   _dropdown(action, idx) {
-    const options = [{id: '', name: 'System tag'}].concat(action.options);
+    const options = [{id: '', name: 'System tag', css: ''}].concat(action.options);
     const dropdown = document.createElement('div');
     dropdown.className = 'btn-group';
     dropdown.setAttribute('role', 'group');
@@ -103,7 +99,9 @@ export class Toolbar extends BaseModule {
     button.id = `ql-img-toolbar-button-${idx}`;
     button.setAttribute('data-toggle', 'dropdown');
     button.setAttribute('aria-expanded', 'false');
-    button.textContent = options[0].name;
+
+    const selected = options.filter(option => option.css === SystemTagClass.value(this.img));
+    button.textContent = selected ? selected[0].name : options[0].name;
 
     const span = document.createElement('span');
     span.className = 'caret';
@@ -122,9 +120,13 @@ export class Toolbar extends BaseModule {
       a.textContent = option.name;
       a.setAttribute('role', 'menuitem');
       a.addEventListener('click', () => {
-        option.value ?
-        SystemTagClass.add(this.img, option.value) :
-        SystemTagClass.remove(this.img);
+        if (option.css) {
+          SystemTagClass.add(this.img, option.css.slice(1));
+          button.textContent = option.name;
+        } else {
+          SystemTagClass.remove(this.img);
+          button.textContent = options[0].name;
+        }
       });
       li.appendChild(a);
       ul.appendChild(li);
