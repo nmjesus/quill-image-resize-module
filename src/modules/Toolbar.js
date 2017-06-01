@@ -73,7 +73,7 @@ export class Toolbar extends BaseModule {
       },
       {
         type: 'dropdown',
-        options: this.options.systemTagsOptions || [],
+        options: this.options.systemTags,
         apply: () => {
           SystemTagClass.add(this.img, 'tag');
         },
