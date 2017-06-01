@@ -100,12 +100,14 @@ export class Toolbar extends BaseModule {
     button.setAttribute('data-toggle', 'dropdown');
     button.setAttribute('aria-expanded', 'false');
 
-    const selected = options.filter(option => option.css === SystemTagClass.value(this.img));
-    button.textContent = selected ? selected[0].name : options[0].name;
-
     const span = document.createElement('span');
-    span.className = 'caret';
+    const selected = options.filter(option => option.css === SystemTagClass.value(this.img));
+    span.textContent = selected ? selected[0].name : options[0].name;
     button.appendChild(span);
+
+    const caret = document.createElement('span');
+    caret.className = 'caret';
+    button.appendChild(caret);
 
     dropdown.appendChild(button);
 
@@ -122,10 +124,10 @@ export class Toolbar extends BaseModule {
       a.addEventListener('click', () => {
         if (option.css) {
           SystemTagClass.add(this.img, option.css.slice(1));
-          button.textContent = option.name;
+          span.textContent = option.name;
         } else {
           SystemTagClass.remove(this.img);
-          button.textContent = options[0].name;
+          span.textContent = options[0].name;
         }
       });
       li.appendChild(a);
