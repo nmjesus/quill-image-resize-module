@@ -22,6 +22,7 @@ export class DisplaySize extends BaseModule {
 
         const size = this.getCurrentSize();
         this.display.innerHTML = size.join(' &times; ');
+        /*
         if (size[0] > 120 && size[1] > 30) {
             // position on top of image
             Object.assign(this.display.style, {
@@ -48,6 +49,7 @@ export class DisplaySize extends BaseModule {
                 left: 'auto',
             });
         }
+        */
     };
 
     getCurrentSize = () => [
