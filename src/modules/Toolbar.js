@@ -144,7 +144,6 @@ export class Toolbar extends BaseModule {
     icon.setAttribute('aria-hidden', 'true');
     button.appendChild(icon);
     button.addEventListener('click', (ev) => {
-      console.log(ev.target);
       // deselect all buttons
       this.toolbar.querySelectorAll('button').forEach(elm => elm.classList.remove('active'));
       button.classList.add('active');
@@ -176,9 +175,7 @@ export class Toolbar extends BaseModule {
       if (action.type === 'dropdown' && action.options.length) {
         elm = this._dropdown(action, idx);
       }
-      if (elm) {
-        this.toolbar.appendChild(elm);
-      }
+      if (elm) this.toolbar.appendChild(elm);
     });
   };
 
