@@ -4,9 +4,10 @@ export class DisplaySize extends BaseModule {
     onCreate = () => {
         // Create the container to hold the size display
         this.display = document.createElement('div');
+        this.display.className = "ql-image-size";
 
         // Apply styles
-        Object.assign(this.display.style, this.options.displayStyles);
+        // Object.assign(this.display.style, this.options.displayStyles);
 
         // Attach it
         this.overlay.appendChild(this.display);
