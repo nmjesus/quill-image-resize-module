@@ -45,7 +45,7 @@ export class Toolbar extends BaseModule {
           DisplayStyle.add(this.img, 'block');
           FloatStyle.remove(this.img);
           MarginStyle.add(this.img, 'auto');
-          WidthStyle.remove(this.img, 'wide');
+          WidthStyle.remove(this.img);
         },
         isApplied: () => MarginStyle.value(this.img) == 'auto',
       },
@@ -81,8 +81,10 @@ export class Toolbar extends BaseModule {
       },
       {
         type: 'button',
+        action: 'remove',
         icon: 'icon wb-trash',
         apply: () => {
+          this.img.parentNode.removeChild(this.img);
         },
         isApplied: () => {},
       },
@@ -141,7 +143,8 @@ export class Toolbar extends BaseModule {
     icon.className = action.icon;
     icon.setAttribute('aria-hidden', 'true');
     button.appendChild(icon);
-    button.addEventListener('click', () => {
+    button.addEventListener('click', (ev) => {
+      console.log(ev.target);
       // deselect all buttons
       this.toolbar.querySelectorAll('button').forEach(elm => elm.classList.remove('active'));
       button.classList.add('active');
@@ -150,7 +153,7 @@ export class Toolbar extends BaseModule {
         FloatStyle.remove(this.img);
         MarginStyle.remove(this.img);
         DisplayStyle.remove(this.img);
-        WideClass.remove(this.img, 'wide');
+        WidthStyle.remove(this.img);
       } else {
         // otherwise, select button and apply
         button.classList.add('active');
@@ -173,8 +176,10 @@ export class Toolbar extends BaseModule {
       if (action.type === 'dropdown' && action.options.length) {
         elm = this._dropdown(action, idx);
       }
-      this.toolbar.appendChild(elm);
-      });
+      if (elm) {
+        this.toolbar.appendChild(elm);
+      }
+    });
   };
 
 }
