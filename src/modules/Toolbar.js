@@ -33,7 +33,7 @@ export class Toolbar extends BaseModule {
         apply: () => {
           DisplayStyle.remove(this.img);
           FloatStyle.add(this.img, 'left');
-          MarginStyle.add(this.img, '0 1em 1em 0');
+          MarginStyle.add(this.img, '0 2rem 2rem 0');
           WidthStyle.remove(this.img);
         },
         isApplied: () => FloatStyle.value(this.img) == 'left',
@@ -44,10 +44,10 @@ export class Toolbar extends BaseModule {
         apply: () => {
           DisplayStyle.add(this.img, 'block');
           FloatStyle.remove(this.img);
-          MarginStyle.add(this.img, 'auto');
+          MarginStyle.add(this.img, '0 auto 2rem');
           WidthStyle.remove(this.img);
         },
-        isApplied: () => MarginStyle.value(this.img) == 'auto',
+        isApplied: () => MarginStyle.value(this.img) == '0px auto 2rem',
       },
       {
         type: 'button',
@@ -55,7 +55,7 @@ export class Toolbar extends BaseModule {
         apply: () => {
           DisplayStyle.remove(this.img);
           FloatStyle.add(this.img, 'right');
-          MarginStyle.add(this.img, '0 0 1em 1em');
+          MarginStyle.add(this.img, '0 0 2rem 2rem');
           WidthStyle.remove(this.img);
         },
         isApplied: () => FloatStyle.value(this.img) == 'right',
