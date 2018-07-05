@@ -2,6 +2,10 @@ import { BaseModule } from './BaseModule';
 
 export class DisplaySize extends BaseModule {
     onCreate = () => {
+        if (this.img.nodeName.toUpperCase() !== 'IMG') {
+            return;
+        }
+
         // Create the container to hold the size display
         this.display = document.createElement('div');
         this.display.className = "ql-image-size";

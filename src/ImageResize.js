@@ -36,7 +36,8 @@ export default class ImageResize {
         document.execCommand('enableObjectResizing', false, 'false');
 
         // respond to clicks inside the editor
-        this.quill.root.addEventListener('click', this.handleClick, false);
+        this.quill.root.addEventListener('mouseover', this.handleClick, false);
+        // this.quill.root.addEventListener('mouseleave', this.hide, false);
 
         this.quill.root.parentNode.style.position = this.quill.root.parentNode.style.position || 'relative';
 
@@ -82,7 +83,8 @@ export default class ImageResize {
     };
 
     handleClick = (evt) => {
-        if (evt.target && evt.target.tagName && evt.target.tagName.toUpperCase() === 'IMG') {
+        console.log('[DEBUG] CLICK', evt);
+        if (evt.target && evt.target.tagName && (evt.target.tagName.toUpperCase() === 'IMG' || evt.target.tagName.toUpperCase() === 'IFRAME')) {
             if (this.img === evt.target) {
                 // we are already focused on this image
                 return;

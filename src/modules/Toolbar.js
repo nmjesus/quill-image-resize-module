@@ -103,7 +103,7 @@ export class Toolbar extends BaseModule {
     const span = document.createElement('span');
     span.className = 'text-truncate';
     const selected = options.filter(option => option.css === SystemTagClass.value(this.img));
-    span.textContent = selected ? selected[0].name : options[0].name;
+    span.textContent = selected.length ? selected[0].name : options[0].name;
     button.appendChild(span);
 
     const caret = document.createElement('span');
